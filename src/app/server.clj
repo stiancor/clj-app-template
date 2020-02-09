@@ -1,5 +1,6 @@
 (ns app.server
-  (:require [mount.core :as mount]))
+  (:require [mount.core :as mount]
+            [app.webserver]))
 
 (defn -main [& args]
   (.addShutdownHook (Runtime/getRuntime)

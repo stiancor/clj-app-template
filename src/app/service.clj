@@ -3,10 +3,11 @@
             [ring.util.response :as resp]))
 
 (defn evaluate [body]
-  (log/info body)
+  (log/info "Body: " body)
   (resp/response {}))
 
 (defn handle-req [req]
+  (log/info "Request received from: " (:remote-addr req))
   (try (evaluate (:body req))
        (catch Exception e
          (log/error "Error: " e)

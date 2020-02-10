@@ -7,7 +7,8 @@
         org.clojure/tools.logging {:mvn/version "0.6.0"}
         mount {:mvn/version "0.1.16"}
         prone {:mvn/version "2020-01-17"}
-        compojure {:mvn/version "1.6.1"}}
+        compojure {:mvn/version "1.6.1"}
+        org.clojure/core.match {:mvn/version "0.3.0"}}
  :mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
              "clojars" {:url "https://clojars.org/repo"}}
  :aliases {:repl {}

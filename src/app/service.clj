@@ -6,13 +6,9 @@
   (log/info body)
   (resp/response {}))
 
-(defn handle-input [body]
-  (try (evaluate body)
+(defn handle-req [req]
+  (try (evaluate (:body req))
        (catch Exception e
          (log/error "Error: " e)
-         (resp/response {:status 501
-                         :body "Not implemented yet!"}))))
-
-(defn handle-req [req]
-  (merge {:headers {:content-type :json}}
-         (handle-input (:body req))))
+         {:status 501
+          :body {:error "Not implemented yet!"}})))

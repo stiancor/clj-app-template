@@ -1,6 +1,5 @@
 (ns app.webserver
-  (:require [ring.middleware.reload :refer [wrap-reload]]
-            [prone.middleware :refer [wrap-exceptions]]
+  (:require [prone.middleware :refer [wrap-exceptions]]
             [immutant.web :as immutant]
             [clojure.tools.logging :as log]
             [app.routes :as routes]
@@ -24,10 +23,8 @@
                        :not-modified-responses false))))
 
 
-(def development-app (wrap-reload
-                       (wrap-exceptions
-                         default-app)
-                       {:dirs ["src" "resources"]}))
+(def development-app (wrap-exceptions
+                       default-app))
 
 (defstate ^{:on-reload :noop} webserver
           :start (let [web (-> (if is-dev? #'development-app

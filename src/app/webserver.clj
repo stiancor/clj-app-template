@@ -1,16 +1,20 @@
 (ns app.webserver
   (:require [prone.middleware :refer [wrap-exceptions]]
-            [immutant.web :as immutant]
+            [ring.adapter.undertow :refer [run-undertow]]
             [clojure.tools.logging :as log]
             [app.routes :as routes]
             [mount.core :refer [defstate]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
-            [ring.middleware.json :refer [wrap-json-body wrap-json-response]]))
+            [ring.middleware.json :refer [wrap-json-body wrap-json-response]])
+  (:import (io.undertow Undertow)))
 
 (def is-dev? true)
 
 (def web-conf {:port 7331
                :host "0.0.0.0"})
+
+(defn- ring-handler [handler]
+  (fn [request] (handler request)))
 
 (def default-app
   (-> #'routes/routes
@@ -29,8 +33,13 @@
 (defstate ^{:on-reload :noop} webserver
           :start (let [web (-> (if is-dev? #'development-app
                                            #'default-app)
-                               (immutant/run web-conf))]
-                   (immutant/server web)
-                   (log/info (str "Started Immutant webserver on port " (:port web-conf))))
-          :stop (do (when (.isRunning webserver) (.stop webserver))
+                               ring-handler
+                               (run-undertow web-conf))]
+                   (log/info (str "Started Immutant webserver on port " (:port web-conf)))
+                   web)
+          :stop (do (.stop ^Undertow webserver)
                     (log/info "Stopped Immutant webserver")))
+
+(comment
+  "Run this fn to start it all up"
+  (mount.core/start))
